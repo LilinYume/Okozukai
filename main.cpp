@@ -1,18 +1,16 @@
-ï»¿#include <iostream>
+#include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <cstdlib>
 #include <climits>
 #include <string>
 #include <cctype>
+#include "time_stamp.h"
 
 int inpt();
 bool input_again( int& v );
 void write_to_disk( int );
 bool write_confirm();
-
-const char END = '0';
-const char NOT_ENDING = '1';
 
 int main()
 {
@@ -44,30 +42,28 @@ int main()
 	}
 	return 0;
 }
-/* ãƒ¡ãƒ¢ãƒªå†…å…¥åŠ›
-	æ•°å€¤ãŒå…¥åŠ›ã•ã‚Œã‚‹ã¾ã§å…¥åŠ›ã‚’ä¿ƒã™ï¼ˆint:å°æ•°ç‚¹åˆ‡ã‚Šæ¨ã¦ï¼‰
-	EOFã§æ“ä½œã®å–ã‚Šæ¶ˆã—ãŒå¯èƒ½															*/
+/* ƒƒ‚ƒŠ“à“ü—Í
+	”’l‚ª“ü—Í‚³‚ê‚é‚Ü‚Å“ü—Í‚ğ‘£‚·iint:¬”“_Ø‚èÌ‚Äj
+	EOF‚Å‘€ì‚Ìæ‚èÁ‚µ‚ª‰Â”\															*/
 int inpt()
 {
 	int pull = 0;
 	std::cin >> pull;
-	
-	
+
 	if ( !std::cin && !std::cin.eof() ) {
 		while( input_again( pull ) );
 	}
 	return pull;
 }
+/* cin‚ªfailó‘Ô‚È‚çÄ“ü—Í‚ğ‘£‚·
 
-/* cinãŒfailçŠ¶æ…‹ãªã‚‰å†å…¥åŠ›ã‚’ä¿ƒã™
+	‚Ü‚¸failƒtƒ‰ƒO‚ğƒNƒŠƒA‚·‚é‚½‚ßA	ŒÄ‚Ño‚µŒ³‚Åfailƒtƒ‰ƒO‚ğŠm”F‚µ‚ÄŒÄ‚ÔB
 
-	ã¾ãšfailãƒ•ãƒ©ã‚°ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹ãŸã‚ã€	å‘¼ã³å‡ºã—å…ƒã§failãƒ•ãƒ©ã‚°ã‚’ç¢ºèªã—ã¦å‘¼ã¶ã€‚
-
-	1ï¼failãƒ“ãƒƒãƒˆã‚’ã‚¯ãƒªã‚¢ã—ã€å†åº¦å…¥åŠ›ã‚’ä¿ƒã™ã€‚
-	2. cinã®ä¿æŒã—ã¦ã„ã‚‹ãƒãƒƒãƒ•ã‚¡ã‚’æ¶ˆã™(èª­ã¿é£›ã°ã™)ã€‚
-	3ï¼å†åº¦å…¥åŠ›ã‚’ä¿ƒã™ã€‚
-	4. å†å…¥åŠ›ã‚‚å¤±æ•—ï¼ˆfailçŠ¶æ…‹ï¼‰ãªã‚‰true(ã‚‚ã†ä¸€åº¦å…¥åŠ›ãŒå¿…è¦)ã‚’è¿”ã—ã€
-	   goodçŠ¶æ…‹ãªã‚‰false(å…¥åŠ›ã®ã‚„ã‚Šç›´ã—ä¸ç”¨)ã‚’è¿”ã™ã€‚							*/
+	1Dfailƒrƒbƒg‚ğƒNƒŠƒA‚µAÄ“x“ü—Í‚ğ‘£‚·B
+	2. cin‚Ì•Û‚µ‚Ä‚¢‚éƒoƒbƒtƒ@‚ğÁ‚·(“Ç‚İ”ò‚Î‚·)B
+	3DÄ“x“ü—Í‚ğ‘£‚·B
+	4. Ä“ü—Í‚à¸”sifailó‘Ôj‚È‚çtrue(‚à‚¤ˆê“x“ü—Í‚ª•K—v)‚ğ•Ô‚µA
+	   goodó‘Ô‚È‚çfalse(“ü—Í‚Ì‚â‚è’¼‚µ•s—p)‚ğ•Ô‚·B							*/
 bool input_again( int& re_val )
 {
 	std::cin.clear();
@@ -79,12 +75,18 @@ bool input_again( int& re_val )
 	else return false;
 }
 
-/* ãƒ‡ã‚£ã‚¹ã‚¯ãƒ»ãƒ•ã‚¡ã‚¤ãƒ«ã«æ•´æ•°å€¤ã‚’æ›¸ãè¾¼ã‚€ã€‚
-	ofstream ã®ãƒ­ãƒ¼ã‚«ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®ç”Ÿæ­»ã¯
-	ã“ã®é–¢æ•°ã®ãƒ©ã‚¤ãƒ•ã‚¿ã‚¤ãƒ ã«å§”ã­ã‚‹ ï½½ï¾”ï½§ãƒ»ãƒ»ãƒ»									*/
+/* ƒfƒBƒXƒNEƒtƒ@ƒCƒ‹‚É®”’l‚ğ‘‚«‚ŞB
+	ofstream ‚Ìƒ[ƒJƒ‹ƒIƒuƒWƒFƒNƒg‚Ìƒtƒ@ƒCƒ‹EƒXƒgƒŠ[ƒ€‚Ì¶€‚Í
+	‚±‚ÌŠÖ”‚Ìƒ‰ƒCƒtƒ^ƒCƒ€‚ÉˆÏ‚Ë‚é ½Ô§EEE									*/
 void write_to_disk( int w_val )
 {
-	std::ofstream fs_out( "tmp.txt", std::ios::binary | std::ios::app );
+	using time_stamp::Date;
+	Date stamp;
+
+	const char* file_name = stamp.get_month_lable();
+
+	// ¡Œ‚ÌŒ–¼‚ğƒtƒ@ƒCƒ‹–¼‚É‚·‚é	
+	std::ofstream fs_out( file_name, std::ios::binary | std::ios::app );
 
 	if ( !fs_out ) {
 		std::cerr << "Err: file cannot open\n";
@@ -92,21 +94,21 @@ void write_to_disk( int w_val )
 	}
 
 	if ( write_confirm() == true ) { 
-		fs_out << w_val << std::endl;
+		fs_out << w_val << ' ' << stamp.get_day() <<  ' ' << stamp.get_time() <<  std::endl;
 		std::cout << "success" << std::endl;
 		std::cout << "type [number] as command " << std::flush;
 	}
-	// NOã®å ´åˆã¯ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã ã‘è¡¨ç¤ºã—ã€ãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ãè¾¼ã¾ãªã„ã€‚
+	// NO‚Ìê‡‚ÍƒƒbƒZ[ƒW‚¾‚¯•\¦‚µAƒtƒ@ƒCƒ‹‚É‘‚«‚Ü‚È‚¢B
 	else {
 		std::cout << "your input value does not recorded\n"
 			<< "type [number] as command " << std::flush;
-		return; 
+		return;
 	}
 }
-/* ç›´å‰ã®å…¥åŠ›ã‚’å–ã‚Šæ¶ˆã™ã‹ç¢ºèªã™ã‚‹ã€‚ï¼ˆç¢ºèªã®ã¿ã€å–ã‚Šæ¶ˆã—æ“ä½œã¯ã—ãªã„ã€‚ï¼‰
-	y,Y,n,Nã®ã„ãšã‚Œã‹1æ–‡å­—ã®ã¿å…¥åŠ›ã‚’å—ã‘ä»˜ã‘ã‚‹ã€‚
-	æˆ»ã‚Šå€¤ã¯Yesã®å ´åˆtrue, Noã®å ´åˆfalseã€‚
-	é–¢æ•°ã‚’æŠœã‘ã‚‹ç›´å‰ã®"return false"ã¯é–¢æ•°å¼è‡ªä½“ãŒãŠã‹ã—ã„ã“ã¨ã‚’è¡¨ã™ã€‚			*/
+/* ’¼‘O‚Ì“ü—Í‚ğæ‚èÁ‚·‚©Šm”F‚·‚éBiŠm”F‚Ì‚İAæ‚èÁ‚µ‘€ì‚Í‚µ‚È‚¢Bj
+	y,Y,n,N‚Ì‚¢‚¸‚ê‚©1•¶š‚Ì‚İ“ü—Í‚ğó‚¯•t‚¯‚éB
+	–ß‚è’l‚ÍYes‚Ìê‡true, No‚Ìê‡falseB
+	ŠÖ”‚ğ”²‚¯‚é’¼‘O‚Ì"return false"‚ÍŠÖ”®©‘Ì‚ª‚¨‚©‚µ‚¢‚±‚Æ‚ğ•\‚·B			*/
 bool write_confirm()
 {
 	bool ok = true;
@@ -114,7 +116,6 @@ bool write_confirm()
 	std::cout << "write to disk file. are you ok? (y/n) " << std::flush;
 
 	while( std::cin.get( ans ) ) {
-
 		if ( ans == 'y' || ans == 'Y') return ok;
 		else if ( ans == 'n' || ans == 'N' ) return !ok;
 		else {
