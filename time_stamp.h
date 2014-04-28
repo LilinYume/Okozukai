@@ -7,9 +7,8 @@
 
 namespace time_stamp
 {
-	const int day_buf = 9;
-	const int time_buf = 7;
-
+	const int day_buf = 11;
+	const int time_buf = 9;
 	class Date
 	{
 	private:
@@ -17,6 +16,7 @@ namespace time_stamp
 		std::string week_lable;
 		char day[ day_buf ];
 		char time[ time_buf ];
+	
 	public:
 		Date()
 		{
@@ -92,17 +92,29 @@ namespace time_stamp
 		}
 		void set_day_value() 
 		{
+			char format[] = "%Y/%m/%d";
+			
+			if ( sizeof format > day_buf ) {
+				std::cout << "not enough buffer about day" << std::endl;
+				exit( EXIT_FAILURE );
+			}
 			tm today;
 			time_t t_val = std::time( NULL );
 			localtime_s( &today, &t_val );
-			std::strftime( day, sizeof day, "%Y%m%d", &today );
+			std::strftime( day, day_buf, format, &today );
 		}
 		void set_time_value() 
 		{
+			char format[] = "%H:%M:%S";
+
+			if ( sizeof format > time_buf ) {
+				std::cout << "not enough buffer about time" << std::endl;
+				exit( EXIT_FAILURE );
+			}
 			tm today;
 			time_t t_val = std::time( NULL );
 			localtime_s( &today, &t_val );
-			std::strftime( time, sizeof time, "%H%M%S", &today );
+			std::strftime( time, time_buf, format , &today );
 		}
 	public:
 		const char* get_month_lable() 
