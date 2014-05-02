@@ -1,4 +1,4 @@
-#ifndef TIME_STAMP_H
+﻿#ifndef TIME_STAMP_H
 #define TIME_STAMP_H
 
 #include <iostream>
