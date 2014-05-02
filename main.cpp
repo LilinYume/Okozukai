@@ -1,7 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <iomanip>
-// #include <stdexcept>
 #include <cstdlib>
 #include <string>
 #include "time_stamp.h"
@@ -27,6 +25,7 @@ int main()
 
 	char command = -1;
 	int cost = 0;
+
 	std::cout << "0: exit    1: new input    2: view history" << std::endl;
 	std::cout << "type command: ";
 	while ( std::cin >> command ) {
@@ -59,10 +58,30 @@ void create_new_file( const char* file )
 		std::cerr << "file cannot open\n";
 		exit( EXIT_FAILURE );
 	}
+
 	if ( is_empty_file( file ) == false ) return;
 
-	balance = inpt( "balance: " );
-	fs_out << "balance: " << balance << std::endl;
+	std::cout << "balance: ";
+	std::cin >> balance;
+	
+	if ( !std::cin ) {
+		if ( std::cin.eof() ) {
+			std::cout << "terminating..." << std::endl;
+			exit( EXIT_FAILURE );
+		}
+		if ( std::cin.fail() ) {
+			std::cin.clear();
+			std::cin.ignore( sizeof balance );
+			create_new_file( file );
+		}
+	}
+	if ( balance == 0 ) {
+		std::cout << "not recored" << std::endl;
+		exit( EXIT_SUCCESS );
+	} 
+	else {
+		fs_out << "balance: " << balance << std::endl;
+	}
 }
 bool is_empty_file( const char* file )
 {
@@ -76,7 +95,6 @@ bool is_empty_file( const char* file )
 
 	if ( status == EOF ) return true;
 	return false;
-
 }
 int inpt( const char* prompt_messeage ) 
 {
@@ -89,7 +107,6 @@ int inpt( const char* prompt_messeage )
 
 	return inpt_val;
 }
-
 int inpt_status( std::istream& stream_in ) 
 {
 	if ( stream_in.eof() ) {
@@ -107,6 +124,11 @@ int inpt_status( std::istream& stream_in )
 }
 void write_to_disk( const char* file, int write_val )
 {
+	if ( write_val == 0 ) { 
+		std::cout	<< "not reacorded\n"
+					<< "type command: ";
+		return;
+	}
 	using time_stamp::Date;
 	Date stamp;
 
@@ -152,7 +174,6 @@ void view_history( const char* file )
 {
 	std::string balance, rows;
 	balance = rows = "";
-
 
 	std::ifstream fs_in ( file, std::ios::binary );
 	if ( !fs_in ) {
