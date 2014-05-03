@@ -4,13 +4,14 @@
 #include <string>
 #include "time_stamp.h"
 
-void create_new_file( const char* );
-bool is_empty_file( const char* );
-int inpt( const char* );
+void create_new_file( const char* file_name );
+bool is_empty_file( const char* file_name );
+int inpt( const char* prompt_messeage );
+int inpt( const char* prompt_messeage, int& input_status );
 int inpt_status( std::istream& );
-void write_to_disk( const char* , int );
+void write_to_disk( const char* file_name, int value );
 bool write_confirm();
-void view_history( const char* );
+void view_history( const char* file_name );
 
 const int OK = 1;
 const int NG = 0;
@@ -51,7 +52,7 @@ int main()
 
 void create_new_file( const char* file )
 {
-	int balance = 0;
+	int balance = -1;
 	std::ofstream fs_out( file, std::ios::binary | std::ios::app );
 
 	if ( !fs_out ) {
@@ -61,27 +62,17 @@ void create_new_file( const char* file )
 
 	if ( is_empty_file( file ) == false ) return;
 
-	std::cout << "balance: ";
-	std::cin >> balance;
+	int status = NG;
 	
-	if ( !std::cin ) {
-		if ( std::cin.eof() ) {
-			std::cout << "terminating..." << std::endl;
-			exit( EXIT_FAILURE );
-		}
-		if ( std::cin.fail() ) {
-			std::cin.clear();
-			std::cin.ignore( sizeof balance );
-			create_new_file( file );
+	while( status == NG ) {
+		balance = inpt( "balance: ", status );
+
+		if ( status == EOF || balance == 0 ) {
+			std::cout << "not recored" << std::endl;
+			exit( EXIT_SUCCESS );
 		}
 	}
-	if ( balance == 0 ) {
-		std::cout << "not recored" << std::endl;
-		exit( EXIT_SUCCESS );
-	} 
-	else {
-		fs_out << "balance: " << balance << std::endl;
-	}
+	fs_out << "balance: " << balance << std::endl;
 }
 bool is_empty_file( const char* file )
 {
@@ -104,7 +95,27 @@ int inpt( const char* prompt_messeage )
 		std::cout << prompt_messeage;
 		std::cin >> inpt_val;
 	} while( inpt_status( std::cin ) == NG );
+	return inpt_val;
+}
+int inpt( const char* prompt_messeage, int& input_status )
+{
+	int inpt_val = -1;
+	
+	std::cout << prompt_messeage;
+	std::cin >> inpt_val;
 
+	if ( !std::cin ) {
+		if ( std::cin.eof() ) {
+			input_status = EOF;
+			std::cin.clear();
+		}
+		else if ( std::cin.fail() ) {
+			input_status = NG;
+			std::cin.clear();
+			std::cin.ignore( sizeof inpt_val );
+		}
+	}
+	else input_status = OK;
 	return inpt_val;
 }
 int inpt_status( std::istream& stream_in ) 
